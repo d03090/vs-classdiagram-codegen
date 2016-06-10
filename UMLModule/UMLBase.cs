@@ -16,7 +16,7 @@ namespace UMLModule
          {
             FieldInfo field = this.GetType().GetField(connectedRole.FieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             Multiplicity multiplicity = null;
-            int? minCount, maxCount;
+
             if (field != null)
             {
                if (field.FieldType == sender.GetType())
@@ -54,15 +54,14 @@ namespace UMLModule
                      case UMLNotficationType.ADD:
                         //check multiplicity
                         multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
-                        GetMinMaxCount(multiplicity, out minCount, out maxCount);
 
-                        if (!maxCount.HasValue || collection.Count < maxCount.Value)
+                        if (CheckMultiplicity(multiplicity, collection.Count + 1))
                         {
                            collection.Add(value);
                         }
                         else
                         {
-                           throw new UMLOutOfBoundsException("UpperBound " + maxCount.Value + " reached!");
+                           throw new UMLOutOfBoundsException((collection.Count + 1) + " out of bounds: " + multiplicity.Value);
                         }
                         break;
                      case UMLNotficationType.SET:
@@ -76,15 +75,14 @@ namespace UMLModule
 
                            //check multiplicity
                            multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
-                           GetMinMaxCount(multiplicity, out minCount, out maxCount);
 
-                           if (!minCount.HasValue || oldCollection.Count > minCount.Value)
+                           if (CheckMultiplicity(multiplicity, oldCollection.Count - 1))
                            {
                               oldCollection.Remove(value);
                            }
                            else
                            {
-                              throw new UMLOutOfBoundsException("LowerBound " + minCount.Value + " reached!");
+                              throw new UMLOutOfBoundsException((oldCollection.Count - 1) + " out of bounds: " + multiplicity.Value);
                            }
                         }
                         break;
@@ -96,31 +94,10 @@ namespace UMLModule
          }
       }
 
-      protected void GetMinMaxCount(Multiplicity multiplicity, out int? minCount, out int? maxCount)
+      protected bool CheckMultiplicity(Multiplicity multiplicity, int count)
       {
-         minCount = null;
-         maxCount = null;
-
-         if (multiplicity != null)
-         {
-            if (multiplicity.Value.Contains(".."))
-            {
-               string[] tmp = multiplicity.Value.Split(new string[] { ".." }, StringSplitOptions.None);
-
-               minCount = int.Parse(tmp[0]);
-               if (tmp[1] == "*")
-                  maxCount = null;
-               else
-                  maxCount = int.Parse(tmp[1]);
-            }
-            else
-            {
-               if (multiplicity.Value == "*")
-                  maxCount = null;
-               else
-                  maxCount = int.Parse(multiplicity.Value);
-            }
-         }
+         return (!multiplicity.MinCount.HasValue || multiplicity.MinCount.Value <= count)
+            && (!multiplicity.MaxCount.HasValue || multiplicity.MaxCount.Value >= count);
       }
    }
 }

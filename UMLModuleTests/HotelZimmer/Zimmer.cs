@@ -18,10 +18,11 @@ namespace UMLModuleTests.HotelZimmer
             return base.Hotel;
          }
 
-         set
-         {
-            base.Hotel = value;
-         }
+         //reassign not allowed --> Composition
+         //set
+         //{
+         //   base.Hotel = value;
+         //}
       }
 
 
@@ -36,6 +37,10 @@ namespace UMLModuleTests.HotelZimmer
          {
             _name = value;
          }
+      }
+      
+      public Zimmer(Hotel hotel) : base(hotel)
+      {
       }
    }
 }

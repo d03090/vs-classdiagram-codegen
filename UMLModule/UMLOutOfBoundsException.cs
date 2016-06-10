@@ -8,7 +8,7 @@ namespace UMLModule
 {
    public class UMLOutOfBoundsException : Exception
    {
-      public string Message { get; set; }
+      public new string Message { get; set; }
 
       public UMLOutOfBoundsException()
       {
