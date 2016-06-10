@@ -48,43 +48,43 @@ namespace UMLModuleTests.PersonAuto
 
       public void AddReifen(Reifen reifen)
       {
-         FieldInfo field = this.GetType().GetField("_reifen", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-         Multiplicity multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
-         int? minCount, maxCount;
-         GetMinMaxCount(multiplicity, out minCount, out maxCount);
+         //FieldInfo field = this.GetType().GetField("_reifen", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+         //Multiplicity multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
+         //int? minCount, maxCount;
+         //GetMinMaxCount(multiplicity, out minCount, out maxCount);
 
-         HashSet<Reifen> oldValue = new HashSet<Reifen>(_reifen);
+         //HashSet<Reifen> oldValue = new HashSet<Reifen>(_reifen);
 
-         if (!maxCount.HasValue || _reifen.Count < maxCount.Value)
-         {
-            _reifen.Add(reifen);
-         }
-         else
-         {
-            throw new UMLOutOfBoundsException("UpperBound " + maxCount.Value + " reached!");
-         }
+         //if (!maxCount.HasValue || _reifen.Count < maxCount.Value)
+         //{
+         //   _reifen.Add(reifen);
+         //}
+         //else
+         //{
+         //   throw new UMLOutOfBoundsException("UpperBound " + maxCount.Value + " reached!");
+         //}
 
-         //bei 1-n Beziehung --> UMLNotficationType.SET
-         reifen.NotifyChanges(this, oldValue, _reifen, UMLNotficationType.SET, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+         ////bei 1-n Beziehung --> UMLNotficationType.SET
+         //reifen.NotifyChanges(this, oldValue, _reifen, UMLNotficationType.SET, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
       }
 
       public void RemoveReifen(Reifen reifen)
       {
-         FieldInfo field = this.GetType().GetField("_reifen", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-         Multiplicity multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
-         int? minCount, maxCount;
-         GetMinMaxCount(multiplicity, out minCount, out maxCount);
+         //FieldInfo field = this.GetType().GetField("_reifen", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+         //Multiplicity multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
+         //int? minCount, maxCount;
+         //GetMinMaxCount(multiplicity, out minCount, out maxCount);
 
-         if (!minCount.HasValue || _reifen.Count > minCount.Value)
-         {
-            _reifen.Remove(reifen);
-         }
-         else
-         {
-            throw new UMLOutOfBoundsException("LowerBound " + minCount.Value + " reached!");
-         }
+         //if (!minCount.HasValue || _reifen.Count > minCount.Value)
+         //{
+         //   _reifen.Remove(reifen);
+         //}
+         //else
+         //{
+         //   throw new UMLOutOfBoundsException("LowerBound " + minCount.Value + " reached!");
+         //}
 
-         reifen.NotifyChanges(this, reifen, _reifen, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+         //reifen.NotifyChanges(this, reifen, _reifen, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
       }
    }
 }
