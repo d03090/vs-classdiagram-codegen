@@ -33,7 +33,7 @@ namespace UMLModuleTests.HotelZimmer
       //   zimmer.NotifyChanges(this, oldValue, _zimmer, UMLNotficationType.SET, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
       //}
 
-      public Zimmer AddZimmer(Hotel hotel)
+      public Zimmer AddZimmer()
       {
          Zimmer ret = null;
 
@@ -42,7 +42,8 @@ namespace UMLModuleTests.HotelZimmer
 
          if (CheckMultiplicity(multiplicity, _zimmer.Count + 1))
          {
-            ret = new Zimmer(hotel);
+            //HotelBase is abstract. "this" has to be at least a Hotel
+            ret = new Zimmer((Hotel)this);
             _zimmer.Add(ret);
          }
          else
@@ -70,6 +71,9 @@ namespace UMLModuleTests.HotelZimmer
             }
 
             zimmer.NotifyChanges(this, zimmer, _zimmer, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+
+            //for compositions. zimmer can't exist without hotel
+            zimmer.Dispose();
          }
       }
    }

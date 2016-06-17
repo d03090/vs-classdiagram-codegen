@@ -45,6 +45,7 @@
     <Compile Include="UMLBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UMLCompositionViolatedException.cs" />
+    <Compile Include="UMLDisposedException.cs" />
     <Compile Include="UMLOutOfBoundsException.cs" />
   </ItemGroup>
   <ItemGroup>

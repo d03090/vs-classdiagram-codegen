@@ -23,9 +23,6 @@ namespace UMLModuleTests.HotelZimmer
       {
          string zimmerName = "ZimmerName";
          Zimmer zimmer1 = new Zimmer(null) { Name = zimmerName };
-
-         Assert.IsTrue(zimmer1.Name == zimmerName);
-         Assert.IsNull(zimmer1.Hotel);
       }
 
       [TestMethod]
@@ -39,6 +36,9 @@ namespace UMLModuleTests.HotelZimmer
          Assert.IsTrue(hotel1.Zimmer.Count == 1);
          Assert.IsTrue(hotel1.Zimmer[0] == zimmer1);
          Assert.IsTrue(zimmer1.Hotel == hotel1);
+         Assert.IsTrue(hotel1.Name == "Hotel#1");
+         Assert.IsTrue(zimmer1.Name == "Zimmer#1");
+         Assert.IsTrue(hotel1.Zimmer[0].Name == "Zimmer#1");
       }
 
       [TestMethod]
@@ -51,7 +51,7 @@ namespace UMLModuleTests.HotelZimmer
          Assert.IsTrue(hotel1.Zimmer.Count == 1);
          Assert.IsTrue(zimmer1.Hotel == hotel1);
 
-         Zimmer zimmer2 = hotel1.AddZimmer(hotel1);
+         Zimmer zimmer2 = hotel1.AddZimmer();
          Assert.IsTrue(hotel1.Zimmer.Count == 2);
          Assert.IsTrue(hotel1.Zimmer[0] == zimmer1);
          Assert.IsTrue(hotel1.Zimmer[1] == zimmer2);
@@ -73,7 +73,16 @@ namespace UMLModuleTests.HotelZimmer
          hotel1.RemoveZimmer(zimmer1);
 
          Assert.IsTrue(hotel1.Zimmer.Count == 0);
-         Assert.IsNull(zimmer1.Hotel);
+         try
+         {
+            string zimmerName = zimmer1.Name;
+
+            Assert.Fail("Zimmer must not exist at this moment.");
+         }
+         catch (UMLDisposedException e)
+         {
+            Assert.IsTrue(e.Message == "Zimmer is not valid anymore.");
+         }
       }
 
       [TestMethod]
@@ -89,9 +98,18 @@ namespace UMLModuleTests.HotelZimmer
 
          hotel1.RemoveZimmer(zimmer1);
          Assert.IsTrue(hotel1.Zimmer.Count == 0);
-         Assert.IsNull(zimmer1.Hotel);
+         try
+         {
+            string zimmerName = zimmer1.Name;
 
-         Zimmer zimmer2 = hotel1.AddZimmer(hotel1);
+            Assert.Fail("Zimmer must not exist at this moment.");
+         }
+         catch (UMLDisposedException e)
+         {
+            Assert.IsTrue(e.Message == "Zimmer is not valid anymore.");
+         }
+
+         Zimmer zimmer2 = hotel1.AddZimmer();
          Assert.IsTrue(hotel1.Zimmer.Count == 1);
          Assert.IsTrue(hotel1.Zimmer[0] == zimmer2);
          Assert.IsTrue(zimmer2.Hotel == hotel1);
@@ -110,7 +128,16 @@ namespace UMLModuleTests.HotelZimmer
 
          hotel1.RemoveZimmer(zimmer1);
          Assert.IsTrue(hotel1.Zimmer.Count == 0);
-         Assert.IsNull(zimmer1.Hotel);
+         try
+         {
+            string zimmerName = zimmer1.Name;
+
+            Assert.Fail("Zimmer must not exist at this moment.");
+         }
+         catch (UMLDisposedException e)
+         {
+            Assert.IsTrue(e.Message == "Zimmer is not valid anymore.");
+         }
 
          Zimmer zimmer2 = new Zimmer(hotel1) { Name = "Zimmer#2" };
          Assert.IsTrue(hotel1.Zimmer.Count == 1);

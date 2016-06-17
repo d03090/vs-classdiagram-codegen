@@ -26,19 +26,19 @@ namespace UMLModuleTests.HotelZimmer
       }
 
 
-      public string Name
+      public new virtual string Name
       {
          get
          {
-            return _name;
+            return base.Name;
          }
 
          set
          {
-            _name = value;
+            base.Name = value;
          }
       }
-      
+
       public Zimmer(Hotel hotel) : base(hotel)
       {
       }
