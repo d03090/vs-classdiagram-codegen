@@ -1,11 +1,21 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace UMLModuleTests.PersonAuto
 {
    [TestClass]
    public class TestPersonAuto
    {
+      Reifen reifen1 = new Reifen() { Id = 1 };
+      Reifen reifen2 = new Reifen() { Id = 2 };
+      Reifen reifen3 = new Reifen() { Id = 3 };
+      Reifen reifen4 = new Reifen() { Id = 4 };
+      Reifen reifen11 = new Reifen() { Id = 11 };
+      Reifen reifen12 = new Reifen() { Id = 12 };
+      Reifen reifen13 = new Reifen() { Id = 13 };
+      Reifen reifen14 = new Reifen() { Id = 14 };
+
       [TestMethod]
       public void InitPerson()
       {
@@ -20,7 +30,7 @@ namespace UMLModuleTests.PersonAuto
       public void InitAuto()
       {
          string autoKZ = "W-111";
-         Auto auto1 = new Auto() { Kennzeichen = autoKZ };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = autoKZ };
 
          Assert.IsTrue(auto1.Kennzeichen == autoKZ);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -30,7 +40,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPerson()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -47,8 +57,8 @@ namespace UMLModuleTests.PersonAuto
       public void AddTwoAutoToPerson()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
-         Auto auto2 = new Auto() { Kennzeichen = "W-222" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
+         Auto auto2 = new Auto(new HashSet<Reifen>() { reifen11, reifen12, reifen13, reifen14 }) { Kennzeichen = "W-222" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -78,7 +88,7 @@ namespace UMLModuleTests.PersonAuto
       {
          Person person1 = new Person() { Name = "Person1" };
          Person person2 = new Person() { Name = "Person2" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(person2.FaehrtMit.Count == 0);
@@ -108,7 +118,7 @@ namespace UMLModuleTests.PersonAuto
       {
          Person person1 = new Person() { Name = "Person1" };
          Person person2 = new Person() { Name = "Person2" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(person2.FaehrtMit.Count == 0);
@@ -137,7 +147,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveIt()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -159,7 +169,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveIt2()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -181,7 +191,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveItThenAddItAgain()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -210,7 +220,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveItThenAddItAgain2()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -239,7 +249,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveIt2ThenAddItAgain()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -268,7 +278,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveIt2ThenAddItAgain2()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -297,8 +307,8 @@ namespace UMLModuleTests.PersonAuto
       public void AddOneAutoToPersonThenRemoveAWrongOne()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
-         Auto auto2 = new Auto() { Kennzeichen = "W-222" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
+         Auto auto2 = new Auto(new HashSet<Reifen>() { reifen11, reifen12, reifen13, reifen14 }) { Kennzeichen = "W-222" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);
@@ -325,7 +335,7 @@ namespace UMLModuleTests.PersonAuto
       public void AddOnePersonToAuto()
       {
          Person person1 = new Person() { Name = "Person1" };
-         Auto auto1 = new Auto() { Kennzeichen = "W-111" };
+         Auto auto1 = new Auto(new HashSet<Reifen>() { reifen1, reifen2, reifen3, reifen4 }) { Kennzeichen = "W-111" };
 
          Assert.IsTrue(person1.FaehrtMit.Count == 0);
          Assert.IsTrue(auto1.GefahrenVon.Count == 0);

@@ -10,11 +10,11 @@ namespace UMLModule
 {
    public abstract class UMLBase : IUMLNotifications
    {
-      public void NotifyChanges(UMLBase sender, object oldValue, object newValue, UMLNotficationType type, List<ConnectedWithRole> connectedRoles)
+      public void NotifyChanges(UMLBase sender, object oldValue, UMLNotficationType type, List<ConnectedWithRole> connectedRoles)
       {
          foreach (ConnectedWithRole connectedRole in connectedRoles)
          {
-            FieldInfo field = this.GetType().GetField(connectedRole.FieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo field = this.GetType().BaseType.GetField(connectedRole.FieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             Multiplicity multiplicity = null;
 
             if (field != null)
@@ -30,7 +30,7 @@ namespace UMLModule
 
                         field.SetValue(this, sender);
 
-                        sender.NotifyChanges(this, ov, field.GetValue(this), UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+                        sender.NotifyChanges(this, ov, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
                         break;
                      case UMLNotficationType.UPDATE:
                         break;
@@ -69,7 +69,7 @@ namespace UMLModule
                      case UMLNotficationType.UPDATE:
                         break;
                      case UMLNotficationType.DELETE:
-                        if (oldValue != null /*&& connectedRole.AggregationType == AggregationType.Composite*/)
+                        if (oldValue != null)
                         {
                            dynamic oldCollection = Convert.ChangeType(field.GetValue(oldValue), field.FieldType);
 
@@ -96,8 +96,8 @@ namespace UMLModule
 
       protected bool CheckMultiplicity(Multiplicity multiplicity, int count)
       {
-         return (!multiplicity.MinCount.HasValue || multiplicity.MinCount.Value <= count)
-            && (!multiplicity.MaxCount.HasValue || multiplicity.MaxCount.Value >= count);
+         return multiplicity == null || ((!multiplicity.MinCount.HasValue || multiplicity.MinCount.Value <= count)
+            && (!multiplicity.MaxCount.HasValue || multiplicity.MaxCount.Value >= count));
       }
    }
 }

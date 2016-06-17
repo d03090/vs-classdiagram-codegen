@@ -9,7 +9,7 @@ namespace UMLModule
 {
    public interface IUMLNotifications
    {
-      void NotifyChanges(UMLBase sender, object oldValue, object newValue, UMLNotficationType type, List<ConnectedWithRole> connectedRoles);
+      void NotifyChanges(UMLBase sender, object oldValue, UMLNotficationType type, List<ConnectedWithRole> connectedRoles);
    }
 
    public enum UMLNotficationType

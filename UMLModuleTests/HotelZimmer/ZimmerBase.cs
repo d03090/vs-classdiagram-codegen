@@ -13,12 +13,12 @@ namespace UMLModuleTests.HotelZimmer
    {
       //[Multiplicity("1")] has to be 1, because of Composite
       [ConnectedWithRole("_zimmer", AggregationType = AggregationType.Composite)]
-      protected Hotel _hotel;
+      private Hotel _hotel;
 
-      protected string _name;
+      private string _name;
 
       //braucht man für compositions
-      protected bool _disposed = false;
+      private bool _disposed = false;
 
       //kein default constructor, weil ein zimmer nicht ohne hotel existieren darf
       //protected ZimmerBase()
@@ -57,7 +57,8 @@ namespace UMLModuleTests.HotelZimmer
 
             if (_hotel == null)
             {
-               FieldInfo field = this.GetType().GetField("_hotel", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+               //.BaseType to get "ZimmerBase"-Type. "_hotel" does not exist in "Zimmer"-Type!
+               FieldInfo field = this.GetType().BaseType.GetField("_hotel", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                List<ConnectedWithRole> attributes = field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList();
 
                Hotel oldValue = _hotel;
@@ -67,7 +68,7 @@ namespace UMLModuleTests.HotelZimmer
                //if (oldValue != null)
                //   oldValue.NotifyChanges(this, oldValue, value, UMLNotficationType.DELETE, attributes);
 
-               _hotel.NotifyChanges(this, oldValue, value, UMLNotficationType.ADD, attributes);
+               _hotel.NotifyChanges(this, oldValue, UMLNotficationType.ADD, attributes);
             }
             else
             {
@@ -76,6 +77,8 @@ namespace UMLModuleTests.HotelZimmer
          }
       }
 
+      // bei compositions müssen diese properties in der basis klasse erzeugt werden,
+      // damit dieser check auf disposed gemacht werden kann. 
       protected virtual string Name
       {
          get

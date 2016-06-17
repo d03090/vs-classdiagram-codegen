@@ -25,17 +25,17 @@ namespace UMLModuleTests.PersonAuto
 
          set
          {
-            FieldInfo field = this.GetType().GetField("_auto", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            FieldInfo field = this.GetType().BaseType.GetField("_auto", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             List<ConnectedWithRole> attributes = field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList();
 
             Auto oldValue = _auto;
             _auto = value;
 
             if (oldValue != null)
-               oldValue.NotifyChanges(this, oldValue, value, UMLNotficationType.DELETE, attributes);
+               oldValue.NotifyChanges(this, oldValue, UMLNotficationType.DELETE, attributes);
 
             if (_auto != null)
-               _auto.NotifyChanges(this, oldValue, value, UMLNotficationType.ADD, attributes);
+               _auto.NotifyChanges(this, oldValue, UMLNotficationType.ADD, attributes);
          }
       }
    }

@@ -36,5 +36,10 @@ namespace UMLModuleTests.PersonAuto
             _kennzeichen = value;
          }
       }
+
+      //wegen Multiplizitätsattribut muss Auto immer mit 3..4 Reifen existieren
+      public Auto(HashSet<Reifen> reifen) : base(reifen)
+      {
+      }
    }
 }

@@ -33,11 +33,13 @@ namespace UMLModuleTests.HotelZimmer
       //   zimmer.NotifyChanges(this, oldValue, _zimmer, UMLNotficationType.SET, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
       //}
 
+      // AddZimmer ohne Parameter, weil Composition und ein Zimmer kann weder ohne Hotel existieren
+      // noch darf nachträglich diese Bindung verändert werden
       public Zimmer AddZimmer()
       {
          Zimmer ret = null;
 
-         FieldInfo field = this.GetType().GetField("_zimmer", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+         FieldInfo field = this.GetType().BaseType.GetField("_zimmer", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
          Multiplicity multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
 
          if (CheckMultiplicity(multiplicity, _zimmer.Count + 1))
@@ -58,7 +60,7 @@ namespace UMLModuleTests.HotelZimmer
       {
          if (_zimmer.Contains(zimmer))
          {
-            FieldInfo field = this.GetType().GetField("_zimmer", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            FieldInfo field = this.GetType().BaseType.GetField("_zimmer", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             Multiplicity multiplicity = field.GetCustomAttributes(typeof(Multiplicity), false).FirstOrDefault() as Multiplicity;
 
             if (CheckMultiplicity(multiplicity, _zimmer.Count - 1))
@@ -70,7 +72,7 @@ namespace UMLModuleTests.HotelZimmer
                throw new UMLOutOfBoundsException((_zimmer.Count - 1) + " out of bounds: " + multiplicity.Value);
             }
 
-            zimmer.NotifyChanges(this, zimmer, _zimmer, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+            zimmer.NotifyChanges(this, zimmer, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
 
             //for compositions. zimmer can't exist without hotel
             zimmer.Dispose();
