@@ -10,6 +10,13 @@ namespace UMLModule
 {
    public abstract class UMLBase : IUMLNotifications
    {
+      /// <summary>
+      /// This method notifies connected field properties about changes. This is important for the consistence of the whole model.
+      /// </summary>
+      /// <param name="sender">sender object</param>
+      /// <param name="oldValue">only used to remove an item from a connected collection</param>
+      /// <param name="type"></param>
+      /// <param name="connectedRoles"></param>
       public void NotifyChanges(UMLBase sender, object oldValue, UMLNotficationType type, List<ConnectedWithRole> connectedRoles)
       {
          foreach (ConnectedWithRole connectedRole in connectedRoles)
@@ -30,7 +37,10 @@ namespace UMLModule
 
                         field.SetValue(this, sender);
 
-                        sender.NotifyChanges(this, ov, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+                        if (ov != null)
+                        {
+                           sender.NotifyChanges(this, ov, UMLNotficationType.DELETE, field.GetCustomAttributes(typeof(ConnectedWithRole), false).Select(x => x as ConnectedWithRole).ToList());
+                        }
                         break;
                      case UMLNotficationType.UPDATE:
                         break;
