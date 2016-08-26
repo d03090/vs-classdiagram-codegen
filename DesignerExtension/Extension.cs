@@ -14,6 +14,8 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using System.IO;
 using EnvDTE100;
+using VSLangProj140;
+using VSLangProj80;
 
 namespace DesignerExtension
 {
@@ -55,39 +57,10 @@ namespace DesignerExtension
             Solution4 sln = (Solution4)dte.Solution;
 
             string solutionDir = Path.GetDirectoryName(sln.FullName);
+            string solutionName = Path.GetFileNameWithoutExtension(sln.FullName) + "Lib";
 
-            //https://msdn.microsoft.com/en-us/library/ee231205.aspx
-            string templatePath = sln.GetProjectTemplate(@"Windows\1033\ClassLibrary\csClassLibrary.vstemplate", "CSharp");
-
-            Project proj = sln.AddFromTemplate(templatePath, Path.Combine(solutionDir, "huhu"), "huhu", false);
-
-            proj = sln.Projects.Cast<Project>().FirstOrDefault(p => p.Name == "huhu");
-
-            sln.SaveAs(sln.FullName);
-
-
-            //string vsInstallDir = Path.GetFullPath(Path.Combine(dte.FullName, @"..\..\..\"));
-
-            //string ProjectItemsTemplatePath= dte.Solution.ProjectItemsTemplatePath(VSLangProj.PrjKind.prjKindCSharpProject);
-            //dte.Solution.AddFromTemplate(@"C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\ProjectTemplates\CSharp\Windows Root\Windows\1033\ClassLibrary\classlibrary.csproj",
-            //    Path.Combine(solutionDir,"huhu"), "myclasslib");
-
-            //// https://msdn.microsoft.com/en-us/library/tz690efs.aspx
-            //// https://msdn.microsoft.com/en-us/library/bb164728.aspx
-            //object[] parameters = new object[] { EnvDTE.Constants.vsWizardNewProject, "MyConsoleProject", solutionDir, "", false, "", false };
-
-            //EnvDTE.wizardResult res;
-
-            //// Interop type cannot be embedded - http://stackoverflow.com/a/3320279/659254
-            //string s = dte.Solution.TemplatePath[VSLangProj.PrjKind.prjKindCSharpProject];
-
-
-            //res = dte.LaunchWizard(s + "ConsoleApplication.vsz", parameters);
-
-
-
-
-
+            Project proj = CreateProjectWithRef(sln, solutionDir, solutionName);      
+            
 
 
 
@@ -116,6 +89,30 @@ namespace DesignerExtension
             //          Environment.SpecialFolder.Desktop),
             //      "Generated.txt")
             //   , generator.TransformText());
+        }
+
+        private static Project CreateProjectWithRef(Solution4 sln, string solutionDir, string solutionName)
+        {
+            //https://msdn.microsoft.com/en-us/library/ee231205.aspx
+            string templatePath = sln.GetProjectTemplate(@"Windows\1033\ClassLibrary\csClassLibrary.vstemplate", "CSharp");
+
+            Project proj = sln.AddFromTemplate(templatePath, Path.Combine(solutionDir, solutionName), solutionName, false);
+
+            proj = sln.Projects.Cast<Project>().FirstOrDefault(p => p.Name == solutionName);
+
+            proj.ProjectItems.Item("Class1.cs").Delete();
+            proj.ProjectItems.AddFolder("GeneratedCode");
+            proj.ProjectItems.AddFolder("lib").ProjectItems.AddFromFileCopy(@"D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\UMLModule\bin\Debug\UMLModule.dll");
+
+            // https://blogs.msdn.microsoft.com/murat/2008/07/30/envdte-adding-a-reference-to-a-project/
+            // https://msdn.microsoft.com/en-us/library/vslangproj.references.add.aspx
+            VSProject3 vsProj = (VSProject3)proj.Object;
+            vsProj.References.Add(Path.Combine(solutionDir, solutionName, "lib", "UMLModule.dll"));
+
+            proj.Save();
+            sln.SaveAs(sln.FullName);
+
+            return proj;
         }
     }
 }
