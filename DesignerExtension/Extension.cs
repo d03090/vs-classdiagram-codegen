@@ -59,40 +59,23 @@ namespace DesignerExtension
             string solutionDir = Path.GetDirectoryName(sln.FullName);
             string solutionName = Path.GetFileNameWithoutExtension(sln.FullName) + "Lib";
 
-            Project proj = CreateProjectWithRef(sln, solutionDir, solutionName);      
-            
+            Project proj = CreateProjectWithRef(sln, solutionDir, solutionName);
 
+            IDiagram diagram = this.DiagramContext.CurrentDiagram;
+            IModelStore modelStore = diagram.ModelStore;
+            foreach (IClass c in modelStore.AllInstances<IClass>())
+            {
+                string filename = Path.Combine(Path.GetTempPath(), c.Name + ".cs");
 
-
-
-
-            //// A selection of starting points:
-            //IDiagram diagram = this.DiagramContext.CurrentDiagram;
-            //foreach (IShape<IElement> shape in diagram.GetSelectedShapes<IElement>())
-            //{
-            //    IElement element = shape.Element;
-            //}
-            //IModelStore modelStore = diagram.ModelStore;
-            //IModel model = modelStore.Root;
-            //foreach (IClass c in modelStore.AllInstances<IClass>())
-            //{
-
-            //}
-
-            // Initialize the template with the Model Store.
-            //VdmGen generator = new VdmGen(
-            //       DiagramContext.CurrentDiagram.ModelStore);
-            //// Generate the text and write it.
-            //System.IO.File.WriteAllText
-            //  (System.IO.Path.Combine(
-            //      Environment.GetFolderPath(
-            //          Environment.SpecialFolder.Desktop),
-            //      "Generated.txt")
-            //   , generator.TransformText());
+                ClassGen classGen = new ClassGen();
+                File.WriteAllText(filename, classGen.TransformText());
+            }
         }
 
         private static Project CreateProjectWithRef(Solution4 sln, string solutionDir, string solutionName)
         {
+            //TODO check if project already exists
+
             //https://msdn.microsoft.com/en-us/library/ee231205.aspx
             string templatePath = sln.GetProjectTemplate(@"Windows\1033\ClassLibrary\csClassLibrary.vstemplate", "CSharp");
 
