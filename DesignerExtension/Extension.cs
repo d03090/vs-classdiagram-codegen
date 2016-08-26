@@ -17,85 +17,131 @@ using EnvDTE100;
 using VSLangProj140;
 using VSLangProj80;
 
+// http://stackoverflow.com/questions/32870002/extension-could-not-be-found-please-make-sure-the-extension-has-been-installed
+// https://github.com/zpqrtbnk/Zbu.ModelsBuilder/issues/52
 namespace DesignerExtension
 {
-    // DELETE any of these attributes if the command
-    // should not appear in some types of diagram.
-    [ClassDesignerExtension]
-    //[ActivityDesignerExtension]
-    //[ComponentDesignerExtension]
-    //[SequenceDesignerExtension]
-    //[UseCaseDesignerExtension]
-    // [LayerDesignerExtension]
+   // DELETE any of these attributes if the command
+   // should not appear in some types of diagram.
+   [ClassDesignerExtension]
+   //[ActivityDesignerExtension]
+   //[ComponentDesignerExtension]
+   //[SequenceDesignerExtension]
+   //[UseCaseDesignerExtension]
+   // [LayerDesignerExtension]
 
-    // All menu commands must export ICommandExtension:
-    [Export(typeof(ICommandExtension))]
-    public class Extension : ICommandExtension
-    {
-        [Import]
-        internal SVsServiceProvider ServiceProvider = null;
+   // All menu commands must export ICommandExtension:
+   [Export(typeof(ICommandExtension))]
+   public class Extension : ICommandExtension
+   {
+      [Import]
+      internal SVsServiceProvider ServiceProvider = null;
 
-        [Import]
-        public IDiagramContext DiagramContext { get; set; }
+      [Import]
+      public IDiagramContext DiagramContext { get; set; }
 
-        public void QueryStatus(IMenuCommand command)
-        {
-            // Set command.Visible or command.Enabled to false
-            // to disable the menu command.
-            command.Visible = command.Enabled = true;
-        }
+      public void QueryStatus(IMenuCommand command)
+      {
+         // Set command.Visible or command.Enabled to false
+         // to disable the menu command.
+         command.Visible = command.Enabled = true;
+      }
 
-        public string Text
-        {
-            get { return "Generate Code (with Constraints)"; }
-        }
+      public string Text
+      {
+         get { return "Generate Code (with Constraints)"; }
+      }
 
-        public void Execute(IMenuCommand command)
-        {
-            DTE2 dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
+      public void Execute(IMenuCommand command)
+      {
+         DTE2 dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
 
-            Solution4 sln = (Solution4)dte.Solution;
+         Solution4 sln = (Solution4)dte.Solution;
 
-            string solutionDir = Path.GetDirectoryName(sln.FullName);
-            string solutionName = Path.GetFileNameWithoutExtension(sln.FullName) + "Lib";
+         string solutionDir = Path.GetDirectoryName(sln.FullName);
+         string solutionName = Path.GetFileNameWithoutExtension(sln.FullName) + "Lib";
 
-            Project proj = CreateProjectWithRef(sln, solutionDir, solutionName);
+         Project proj = CreateProjectWithRef(sln, solutionDir, solutionName);
 
-            IDiagram diagram = this.DiagramContext.CurrentDiagram;
-            IModelStore modelStore = diagram.ModelStore;
-            foreach (IClass c in modelStore.AllInstances<IClass>())
+         string indent = "\t";
+         // http://stackoverflow.com/questions/1212092/visual-studio-per-solution-indentation-settings
+         // https://msdn.microsoft.com/en-us/library/ms165641.aspx?f=255&MSPPError=-2147217396
+         // https://msdn.microsoft.com/en-us/library/ms165644.aspx
+         Properties props = dte.Properties["TextEditor", "CSharp"];
+         if (!(bool)props.Item("InsertTabs").Value)
+         {
+            indent = "";
+            for (short i = 0; i < (short)props.Item("TabSize").Value; i++)
             {
-                string filename = Path.Combine(Path.GetTempPath(), c.Name + ".cs");
-
-                ClassGen classGen = new ClassGen();
-                File.WriteAllText(filename, classGen.TransformText());
+               indent += " ";
             }
-        }
+         }
 
-        private static Project CreateProjectWithRef(Solution4 sln, string solutionDir, string solutionName)
-        {
-            //TODO check if project already exists
+         IDiagram diagram = this.DiagramContext.CurrentDiagram;
+         IModelStore modelStore = diagram.ModelStore;
+         foreach (IClass c in modelStore.AllInstances<IClass>())
+         {
+            string filename = Path.Combine(Path.GetTempPath(), c.Name + ".cs");
 
+            ClassGen classGen = new ClassGen(c, indent);
+            File.WriteAllText(filename, classGen.TransformText());
+         }
+      }
+
+      private static Project CreateProjectWithRef(Solution4 sln, string solutionDir, string solutionName)
+      {
+         if (!sln.Projects.Cast<Project>().Any(p => p.Name == solutionName))
+         {
             //https://msdn.microsoft.com/en-us/library/ee231205.aspx
             string templatePath = sln.GetProjectTemplate(@"Windows\1033\ClassLibrary\csClassLibrary.vstemplate", "CSharp");
 
-            Project proj = sln.AddFromTemplate(templatePath, Path.Combine(solutionDir, solutionName), solutionName, false);
+            // returned project is always null, search it afterwards
+            sln.AddFromTemplate(templatePath, Path.Combine(solutionDir, solutionName), solutionName, false);
+         }
 
-            proj = sln.Projects.Cast<Project>().FirstOrDefault(p => p.Name == solutionName);
+         Project proj = sln.Projects.Cast<Project>().FirstOrDefault(p => p.Name == solutionName);
 
+         try
+         {
             proj.ProjectItems.Item("Class1.cs").Delete();
-            proj.ProjectItems.AddFolder("GeneratedCode");
-            proj.ProjectItems.AddFolder("lib").ProjectItems.AddFromFileCopy(@"D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\UMLModule\bin\Debug\UMLModule.dll");
+         }
+         catch
+         {
+            // ignore
+         }
 
-            // https://blogs.msdn.microsoft.com/murat/2008/07/30/envdte-adding-a-reference-to-a-project/
-            // https://msdn.microsoft.com/en-us/library/vslangproj.references.add.aspx
-            VSProject3 vsProj = (VSProject3)proj.Object;
-            vsProj.References.Add(Path.Combine(solutionDir, solutionName, "lib", "UMLModule.dll"));
+         try
+         {
+            proj.ProjectItems.Item("GeneratedCode").Delete();
+         }
+         catch
+         {
+            // ignore
+         }
 
-            proj.Save();
-            sln.SaveAs(sln.FullName);
+         proj.ProjectItems.AddFolder("GeneratedCode");
 
-            return proj;
-        }
-    }
+         try
+         {
+            proj.ProjectItems.Item("lib").Delete();
+         }
+         catch
+         {
+            // ignore
+         }
+
+         // TODO add final dll
+         proj.ProjectItems.AddFolder("lib").ProjectItems.AddFromFileCopy(@"D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\UMLModule\bin\Debug\UMLModule.dll");
+
+         // https://blogs.msdn.microsoft.com/murat/2008/07/30/envdte-adding-a-reference-to-a-project/
+         // https://msdn.microsoft.com/en-us/library/vslangproj.references.add.aspx
+         VSProject3 vsProj = (VSProject3)proj.Object;
+         vsProj.References.Add(Path.Combine(solutionDir, solutionName, "lib", "UMLModule.dll"));
+
+         proj.Save();
+         sln.SaveAs(sln.FullName);
+
+         return proj;
+      }
+   }
 }
