@@ -10,22 +10,19 @@
 namespace DesignerExtension
 {
     using System.Linq;
-    using System.Text;
     using System.Collections.Generic;
     using Microsoft.VisualStudio.Uml.AuxiliaryConstructs;
     using Microsoft.VisualStudio.Uml.Classes;
     using Microsoft.VisualStudio.ArchitectureTools.Extensibility.Uml;
     using System;
-    using Microsoft.VisualStudio.Modeling.Integration;
-    using Microsoft.VisualStudio.ArchitectureTools.Adapters;
     
     /// <summary>
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+    #line 1 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\CSharpHelpers.t4"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
-    public partial class ClassGen : ClassGenBase
+    public partial class CSharpHelpers : CSharpHelpersBase
     {
 #line hidden
         /// <summary>
@@ -33,176 +30,8 @@ namespace DesignerExtension
         /// </summary>
         public virtual string TransformText()
         {
-            
-            #line 9 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-   
-   WriteWarningHeader(); 
-
-            
-            #line default
-            #line hidden
-            this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing System.Linq;\r\nusing Syste" +
-                    "m.Reflection;\r\nusing System.Text;\r\nusing System.Threading.Tasks;\r\nusing UMLModul" +
-                    "e;\r\nusing UMLModule.Attributes;\r\n\r\n");
-            
-            #line 21 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-   if(!string.IsNullOrEmpty(_namespace))
-   {
-
-            
-            #line default
-            #line hidden
-            this.Write("namespace ");
-            
-            #line 25 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(_namespace));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n{\r\n");
-            
-            #line 27 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-      PushIndent(_indent);
-   }
-
-            
-            #line default
-            #line hidden
-            
-            #line 31 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(_class.Visibility.ToString().ToLower()));
-            
-            #line default
-            #line hidden
-            
-            #line 31 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(_class.IsAbstract ? " abstract" : ""));
-            
-            #line default
-            #line hidden
-            this.Write(" partial class ");
-            
-            #line 31 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(_class.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" : ");
-            
-            #line 31 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(_class.Name));
-            
-            #line default
-            #line hidden
-            this.Write("Base\r\n{\r\n");
-            
-            #line 33 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-    PushIndent("\t");
-
-    // Write Attributes
-    var ownedAttributes = _class.OwnedAttributes;
-    foreach(IProperty attribute in ownedAttributes)
-    {
-      // dont write private properties, because they are already definded in the base class
-      if(attribute.Visibility != VisibilityKind.Private)
-      {
-         WriteClassUmlPropertyDefinition(attribute);
-         WriteLine("");
-      }	
-    }
-
-            
-            #line default
-            #line hidden
-            
-            #line 48 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-    // Write Associations
-    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes);
-    foreach(IProperty ownedEnd in navigableOwnedEnds) 
-    {
-        WriteClassUmlPropertyDefinition(ownedEnd);
-        WriteLine("");
-    }
-
-            
-            #line default
-            #line hidden
-            this.Write("}\r\n");
-            
-            #line 58 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-   if(!string.IsNullOrEmpty(_namespace))
-   {
-      PopIndent();
-      WriteLine("}");
-   }
-
-            
-            #line default
-            #line hidden
-            this.Write("\r\n\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 67 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-   private void WriteWarningHeader()
-   {
-
-        
-        #line default
-        #line hidden
-        
-        #line 70 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-this.Write("//------------------------------------------------------------------------------\r" +
-        "\n// <auto-generated>\r\n");
-
-        
-        #line default
-        #line hidden
-        
-        #line 73 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-      foreach (string line in WarningHeader.Split('\n'))
-      {
-         Write(@"//     ");
-         WriteLine(line.Trim());
-      }
-
-        
-        #line default
-        #line hidden
-        
-        #line 79 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-this.Write("// </auto-generated>\r\n//---------------------------------------------------------" +
-        "---------------------\r\n");
-
-        
-        #line default
-        #line hidden
-        
-        #line 82 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-   }
-
-   
-
-    /// <summary>
-    /// Write UmlProperty definition.
-    /// </summary>
-    /// <param name="property">The uml IProperty</param>
-    private void WriteClassUmlPropertyDefinition(IProperty property)
-    {
-        WriteUmlPropertyDefinition(property);
-    }
-
-        
-        #line default
-        #line hidden
         
         #line 8 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\CSharpHelpers.t4"
 
@@ -1975,21 +1804,6 @@ this.Write("// </auto-generated>\r\n//------------------------------------------
         
         #line default
         #line hidden
-        
-        #line 1 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
-
-public new Microsoft.VisualStudio.Uml.Classes.IClass Element
-{
-    get
-    {
-        return ((Microsoft.VisualStudio.Uml.Classes.IClass)(base.Element));
-    }
-}
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default
@@ -1999,7 +1813,7 @@ public new Microsoft.VisualStudio.Uml.Classes.IClass Element
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
-    public class ClassGenBase
+    public class CSharpHelpersBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

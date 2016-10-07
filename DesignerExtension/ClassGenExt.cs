@@ -26,15 +26,7 @@ namespace DesignerExtension
          _class = c;
          _indent = indent;
 
-         _namespace = String.Join(".", GetNamespace(c.Namespace).Select(p => p.Name));
-      }
-
-      private IEnumerable<INamespace> GetNamespace(INamespace ns)
-      {
-         if (ns == null || ns.Namespace == null)
-            return Enumerable.Empty<INamespace>();
-
-         return Enumerable.Union<INamespace>(GetNamespace(ns.Namespace), new[] { ns });
+         _namespace = GetNamespace(c.Namespace);
       }
    }
 }

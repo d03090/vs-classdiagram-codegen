@@ -1,8 +1,11 @@
 ﻿<#@ template language="C#" #>
 <#@ assembly name="System.Core" #>
+<#@ Assembly Name="Microsoft.VisualStudio.ArchitectureTools.Extensibility.dll" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ Modeling Processor="ModelingProcessor" ElementType="Microsoft.VisualStudio.Uml.Classes.IClass" ApplyStereotypes="CSharp" #>
+<#@ Include File="CSharpHelpers.t4" #>
 <#   
    WriteWarningHeader(); 
 #>
@@ -27,7 +30,30 @@ namespace <#=  _namespace #>
 #>
 <#= _class.Visibility.ToString().ToLower() #><#= _class.IsAbstract ? " abstract" : "" #> partial class <#= _class.Name #> : <#= _class.Name #>Base
 {
+<#
+    PushIndent("\t");
 
+    // Write Attributes
+    var ownedAttributes = _class.OwnedAttributes;
+    foreach(IProperty attribute in ownedAttributes)
+    {
+      // dont write private properties, because they are already definded in the base class
+      if(attribute.Visibility != VisibilityKind.Private)
+      {
+         WriteClassUmlPropertyDefinition(attribute);
+         WriteLine("");
+      }	
+    }
+#>
+<#
+    // Write Associations
+    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes);
+    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    {
+        WriteClassUmlPropertyDefinition(ownedEnd);
+        WriteLine("");
+    }
+#>
 }
 <#
    if(!string.IsNullOrEmpty(_namespace))
@@ -55,4 +81,15 @@ namespace <#=  _namespace #>
 //------------------------------------------------------------------------------
 <#+
    }
+
+   
+
+    /// <summary>
+    /// Write UmlProperty definition.
+    /// </summary>
+    /// <param name="property">The uml IProperty</param>
+    private void WriteClassUmlPropertyDefinition(IProperty property)
+    {
+        WriteUmlPropertyDefinition(property);
+    }
 #>
