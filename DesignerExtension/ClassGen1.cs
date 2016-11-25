@@ -12,6 +12,9 @@ namespace DesignerExtension
     using System.Linq;
     using System.Text;
     using System.Collections.Generic;
+    using Microsoft.VisualStudio.Uml.Classes;
+    using Microsoft.VisualStudio.Uml.AuxiliaryConstructs;
+    using Microsoft.VisualStudio.ArchitectureTools.Extensibility.Uml;
     using System;
     
     /// <summary>
@@ -28,8 +31,10 @@ namespace DesignerExtension
         /// </summary>
         public virtual string TransformText()
         {
+            this.Write("\r\n");
+            this.Write("\r\n");
             
-            #line 6 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 8 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
    
    WriteWarningHeader(); 
 
@@ -40,7 +45,7 @@ namespace DesignerExtension
                     "m.Reflection;\r\nusing System.Text;\r\nusing System.Threading.Tasks;\r\nusing UMLModul" +
                     "e;\r\nusing UMLModule.Attributes;\r\n\r\n");
             
-            #line 18 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 20 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
    if(!string.IsNullOrEmpty(_namespace))
    {
@@ -50,14 +55,14 @@ namespace DesignerExtension
             #line hidden
             this.Write("namespace ");
             
-            #line 22 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 24 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_namespace));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n");
             
-            #line 24 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 26 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
       PushIndent(_indent);
    }
@@ -66,34 +71,77 @@ namespace DesignerExtension
             #line default
             #line hidden
             
-            #line 28 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 30 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_class.Visibility.ToString().ToLower()));
             
             #line default
             #line hidden
             
-            #line 28 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 30 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_class.IsAbstract ? " abstract" : ""));
             
             #line default
             #line hidden
             this.Write(" partial class ");
             
-            #line 28 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 30 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_class.Name));
             
             #line default
             #line hidden
             this.Write(" : ");
             
-            #line 28 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 30 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(_class.Name));
             
             #line default
             #line hidden
-            this.Write("Base\r\n{\r\n\r\n}\r\n");
+            this.Write("Base\r\n{\r\n");
             
             #line 32 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+   PushIndent(_indent); 
+            
+            #line default
+            #line hidden
+            
+            #line 33 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+
+    // Write Attributes
+    var ownedAttributes = _class.OwnedAttributes;
+    foreach(IProperty attribute in ownedAttributes)
+    {
+       WritePropertyDefinition(attribute, false);
+       WriteLine("");
+    }
+
+            
+            #line default
+            #line hidden
+            
+            #line 42 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+
+    // Write Associations
+    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes);
+    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    {
+        //WriteSummaryComment(ownedEnd.OwningAssociation.Description);
+        //WriteSummaryComment(ownedEnd.Description);
+        //WriteClassUmlPropertyDefinition(ownedEnd);
+        //WriteLine("");
+    }
+
+            
+            #line default
+            #line hidden
+            
+            #line 53 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+   PopIndent(); 
+            
+            #line default
+            #line hidden
+            this.Write("}\r\n");
+            
+            #line 55 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
    if(!string.IsNullOrEmpty(_namespace))
    {
@@ -108,7 +156,7 @@ namespace DesignerExtension
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 41 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+        #line 64 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
    private void WriteWarningHeader()
    {
@@ -117,7 +165,7 @@ namespace DesignerExtension
         #line default
         #line hidden
         
-        #line 44 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+        #line 67 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 this.Write("//------------------------------------------------------------------------------\r" +
         "\n// <auto-generated>\r\n");
 
@@ -125,7 +173,7 @@ this.Write("//------------------------------------------------------------------
         #line default
         #line hidden
         
-        #line 47 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+        #line 70 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
       foreach (string line in WarningHeader.Split('\n'))
       {
@@ -137,7 +185,7 @@ this.Write("//------------------------------------------------------------------
         #line default
         #line hidden
         
-        #line 53 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+        #line 76 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 this.Write("// </auto-generated>\r\n//---------------------------------------------------------" +
         "---------------------\r\n");
 
@@ -145,8 +193,286 @@ this.Write("// </auto-generated>\r\n//------------------------------------------
         #line default
         #line hidden
         
-        #line 56 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+        #line 79 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
+   }
+
+        
+        #line default
+        #line hidden
+        
+        #line 9 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\Helpers.tt"
+
+   /// <summary>
+   /// Gets the navigable owed ends which not correspond to any owned attributes for the given classifier.
+   /// </summary>
+   /// <param name="classifier">The classifier</param>
+   /// <param name="ownedAttributes">The owned attributes</param>
+   /// <returns>The owned attributes</returns>
+   private static IEnumerable<IProperty> GetNavigableOwnedEnds(IClassifier classifier, IEnumerable<IProperty> ownedAttributes)
+   {
+      foreach(IAssociation association in classifier.GetRelatedLinks<IAssociation>()) 
+      {
+         IEnumerable<IProperty> navigableOwnedEnds = association.NavigableOwnedEnds;
+         foreach (IProperty ownedEnd in navigableOwnedEnds)
+         {
+            if ((!StringComparer.OrdinalIgnoreCase.Equals(ownedEnd.Type.QualifiedName, classifier.QualifiedName)
+               ||association.SourceElement == association.TargetElement)
+               &&!IsMemberEndProcessedAsAttribute(ownedEnd, ownedAttributes))
+            {
+               yield return ownedEnd;
+            }
+         }
+      }
+   }
+
+   /// <summary>
+   /// Check if an attribute exists with the same name and type as the member end.
+   /// If so, and if the visibility on the attribute 
+   /// </summary>
+   /// <param name="memberEnd">The member end</param>
+   /// <param name="attributes">The attributes</param>
+   /// <returns>true if the attribute with the same name and type as memberEnd is already processed.</returns>
+   private static bool IsMemberEndProcessedAsAttribute(IProperty memberEnd, IEnumerable<IProperty> attributes)
+   {
+      bool processed = false;
+      var existingAttribs = attributes.Where(attrib => StringComparer.Ordinal.Equals(memberEnd.Name, attrib.Name) && (memberEnd.Type == attrib.Type));
+      if (existingAttribs.Any())
+      {
+         processed = true;
+
+         // check if the visibility conflicts, if so, send the user the warning message.
+         IProperty existingAttrib = existingAttribs.FirstOrDefault();
+         if (existingAttrib.Visibility != memberEnd.Visibility)
+         {
+            // Send user the warning message.
+         }
+      }
+
+      return processed;
+   }
+
+   /// <summary>
+   /// Write a property definition appropriate for class or struct.
+   /// </summary>
+   /// <param name="property">The umlproperty as a property.</param>
+   private void WritePropertyDefinition(IProperty property, bool isComposition) 
+   {
+      Write(property.Visibility.ToString().ToLower()+" ");
+
+      //override base property
+      if(isComposition){
+         Write("new ");
+      }
+      Write("virtual ");
+      Write(AttributeStaticOption(property));
+
+      WritePropertyTypeAndVariableName(property);
+      WriteLine("{");
+      PushIndent("\t");
+      {
+         WriteLine("get");
+         WriteLine("{");
+         PushIndent("\t");      
+         {
+            if(isComposition)
+            {
+               WriteLine("return base."  +property.Name + ";");
+            }
+            else
+            {
+               WriteLine("return "  + ToPrivateField(property.Name) + ";");
+            }
+         }
+         PopIndent();
+         WriteLine("}");
+
+         WriteLine("");
+
+         WriteLine("set");
+         WriteLine("{");
+         PushIndent("\t");
+         {     
+            if(isComposition)
+            {
+               WriteLine("base."  +property.Name + " = value;");
+            }
+            else
+            {
+               WriteLine(ToPrivateField(property.Name) + " = value;");
+            }
+         }
+         PopIndent();
+         WriteLine("}");
+      }
+      PopIndent();
+      WriteLine("}");
+   }
+
+   private static string ToPrivateField(string name){
+      return "_" + name.Substring(0, 1).ToLower() + name.Substring(1);
+   }
+
+   /// <summary>
+   /// Operation static string
+   /// </summary>
+   /// <param name="operation">The operation</param>
+   /// <returns>The static option string for operation</returns>
+   private static string OperationStaticOption(IOperation operation) 
+   {
+      return operation.IsStatic ? "static " : string.Empty;
+   }
+    
+   /// <summary>
+   /// Field readonly string
+   /// </summary>
+   /// <param name="field">The field</param>
+   /// <returns>The readonly option string for field</returns>
+   private static string FieldReadOnlyOption(IProperty field)
+   {
+      return field.IsReadOnly ? "readonly " : string.Empty;
+   }
+
+   /// <summary>
+   /// Attribute static string
+   /// </summary>
+   /// <param name="attribute">The attribute</param>
+   /// <returns>The static option string for attribute</returns>
+   private static string AttributeStaticOption(IProperty attribute)
+   {
+      return attribute.IsStatic ? "static " : string.Empty;
+   }
+
+   /// <summary>
+   /// Operation sealed string
+   /// </summary>
+   /// <param name="operation">The operation</param>
+   /// <returns>The static option string for operation</returns>
+   private static string OperationSealedOption(IOperation operation) 
+   {
+      return operation.IsLeaf ? "sealed " : string.Empty;
+   }
+
+   /// <summary>
+   /// Operation abstract string
+   /// </summary>
+   /// <param name="operation">The operation</param>
+   /// <returns>The abstract option string for operation</returns>
+   private static string OperationAbstractOption(IOperation operation) 
+   {
+      return operation.IsAbstract ? "abstract " : string.Empty;
+   }
+
+   /// <summary>
+   /// Property sealed string
+   /// </summary>
+   /// <param name="property">The property</param>
+   /// <returns>The sealed option string for property</returns>
+   private static string PropertySealedOption(IProperty property) 
+   {
+      return property.IsLeaf ? "sealed " : string.Empty;
+   }
+
+   /// <summary>
+   /// Write the property type and variable name.
+   /// </summary>
+   /// <param name="property">The property</param>
+   /// <param name="isEndOfLine">true to end the line</param>
+   private void WritePropertyTypeAndVariableName(IProperty property)
+   {      
+      string typeName = ElementType(property.Type);
+      string propertyName = property.Name;
+
+      Write(typeName + " " + propertyName);
+      WriteLine("");
+   }
+
+   /// <summary>
+   /// Gets the type if set, otherwise "object".  
+   /// </summary>
+   /// <param name="type">the type in question</param>
+   /// <param name="isEnumerable">specifies if the type should be an IEnumerable</param>
+   /// <returns>the type as element type</returns>
+   private static string ElementType(IType type)
+   {
+      string text = string.Empty;
+      if (type == null)
+      {
+         text = "object";
+      }
+      else 
+      {
+         text = type.Name;
+      }
+
+      return text;
+   }
+
+   /// <summary>
+   /// Translate a string to a C# equivalent.  For example, 
+   /// CSharpTranslation("Boolean") returns "bool".  
+   /// CSharpTranslation("Unrecognized text") returns "Unrecognized text".
+   /// </summary>
+   /// <param name="original">text to translate</param>
+   /// <returns>Translated text if there is a known translation, otherwise the original text.</returns>
+   private static string CSharpTranslation(string original)
+   {
+      switch (original)
+      {
+         case "Boolean": return "bool";
+         case "String": return "string";
+         case "Integer": return "int";
+         case "UnlimitedNatural": return "uint";
+      }
+
+      return original;
+   }
+
+   /// <summary>
+   /// Determine if the property's multiplicty setting requires an IEnumerable type"/>
+   /// </summary>
+   /// <param name="property">query this element's multiplicity</param>
+   /// <returns>true if the element's multiplicity specifies an upper bound greater than 1</returns>
+   private static bool IsEnumerable(IProperty property)
+   {
+      return IsEnumerable(property.UpperValue);
+   }
+
+   /// <summary>
+   /// Determine if the parameter's multiplicty setting requires an IEnumerable type"/>
+   /// </summary>
+   /// <param name="parameter">query this element's multiplicity</param>
+   /// <returns>true if the element's multiplicity specifies an upper bound greater than 1</returns>
+   private static bool IsEnumerable(IParameter parameter)
+   {
+      return IsEnumerable(parameter.UpperValue);
+   }
+
+   /// <summary>
+   /// Determine if the provided value represents an upper bound that requires an IEnumerable type"/>
+   /// </summary>
+   /// <param name="upperValue">value representing a multiplicity's upper bound</param>
+   /// <returns>true if the upperValue represents a value greater than 1</returns>
+   private static bool IsEnumerable(IValueSpecification upperValue)
+   {
+      if (upperValue != null)
+      {
+         string upperBound = upperValue.ToString();
+         if(!string.IsNullOrWhiteSpace(upperBound))
+         {
+            if (upperBound.Contains("*"))
+            {
+               return true;
+            }
+            int val;
+            if (int.TryParse(upperBound, out val))
+            {
+               return val > 1;
+            }
+         }
+      }
+
+      return false;
    }
 
         

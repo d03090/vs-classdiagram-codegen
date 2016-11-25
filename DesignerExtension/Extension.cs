@@ -19,6 +19,7 @@ using VSLangProj80;
 
 // http://stackoverflow.com/questions/32870002/extension-could-not-be-found-please-make-sure-the-extension-has-been-installed
 // https://github.com/zpqrtbnk/Zbu.ModelsBuilder/issues/52
+// --> delete C:\Users\Stefan\AppData\Local\Microsoft\VisualStudio\14.0Exp
 namespace DesignerExtension
 {
    // DELETE any of these attributes if the command

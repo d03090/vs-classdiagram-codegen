@@ -3,6 +3,8 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ Import Namespace="Microsoft.VisualStudio.Uml.Classes" #>
+<#@ Include File="Helpers.tt" #>
 <#   
    WriteWarningHeader(); 
 #>
@@ -27,7 +29,28 @@ namespace <#=  _namespace #>
 #>
 <#= _class.Visibility.ToString().ToLower() #><#= _class.IsAbstract ? " abstract" : "" #> partial class <#= _class.Name #> : <#= _class.Name #>Base
 {
-
+<#   PushIndent(_indent); #>
+<#
+    // Write Attributes
+    var ownedAttributes = _class.OwnedAttributes;
+    foreach(IProperty attribute in ownedAttributes)
+    {
+       WritePropertyDefinition(attribute, false);
+       WriteLine("");
+    }
+#>
+<#
+    // Write Associations
+    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes);
+    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    {
+        //WriteSummaryComment(ownedEnd.OwningAssociation.Description);
+        //WriteSummaryComment(ownedEnd.Description);
+        //WriteClassUmlPropertyDefinition(ownedEnd);
+        //WriteLine("");
+    }
+#>
+<#   PopIndent(); #>
 }
 <#
    if(!string.IsNullOrEmpty(_namespace))
