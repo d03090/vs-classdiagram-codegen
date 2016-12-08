@@ -106,28 +106,28 @@ namespace DesignerExtension
             
             #line 33 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
-    // Write Attributes
+    // Write Associations
+    bool isComposition;
+
     var ownedAttributes = _class.OwnedAttributes;
-    foreach(IProperty attribute in ownedAttributes)
-    {
-       WritePropertyDefinition(attribute, false);
-       WriteLine("");
+    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes, out isComposition);
+    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    {        
+      WriteAssociationDefinition2(ownedEnd, isComposition);
+      WriteLine("");
     }
 
             
             #line default
             #line hidden
             
-            #line 42 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
+            #line 45 "D:\Schule\_UNI\Bachelorarbeit\vs-classdiagram-codegen\DesignerExtension\ClassGen.tt"
 
-    // Write Associations
-    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes);
-    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    // Write Attributes
+    foreach(IProperty attribute in ownedAttributes)
     {
-        //WriteSummaryComment(ownedEnd.OwningAssociation.Description);
-        //WriteSummaryComment(ownedEnd.Description);
-        //WriteClassUmlPropertyDefinition(ownedEnd);
-        //WriteLine("");
+       WritePropertyDefinition(attribute, isComposition);
+       WriteLine("");
     }
 
             
@@ -209,21 +209,35 @@ this.Write("// </auto-generated>\r\n//------------------------------------------
    /// <param name="classifier">The classifier</param>
    /// <param name="ownedAttributes">The owned attributes</param>
    /// <returns>The owned attributes</returns>
-   private static IEnumerable<IProperty> GetNavigableOwnedEnds(IClassifier classifier, IEnumerable<IProperty> ownedAttributes)
+   private static IEnumerable<IProperty> GetNavigableOwnedEnds(IClassifier classifier, IEnumerable<IProperty> ownedAttributes, out bool isComposition)
    {
+      List<IProperty> ret = new List<IProperty>();
+
+      isComposition = false;
+
       foreach(IAssociation association in classifier.GetRelatedLinks<IAssociation>()) 
       {
          IEnumerable<IProperty> navigableOwnedEnds = association.NavigableOwnedEnds;
          foreach (IProperty ownedEnd in navigableOwnedEnds)
          {
+            if(StringComparer.OrdinalIgnoreCase.Equals(ownedEnd.Type.QualifiedName, classifier.QualifiedName))
+            {
+               if (ownedEnd.Aggregation == AggregationKind.Composite)
+               {
+                  isComposition = true;
+               }
+            }
+
             if ((!StringComparer.OrdinalIgnoreCase.Equals(ownedEnd.Type.QualifiedName, classifier.QualifiedName)
                ||association.SourceElement == association.TargetElement)
                &&!IsMemberEndProcessedAsAttribute(ownedEnd, ownedAttributes))
             {
-               yield return ownedEnd;
+               ret.Add(ownedEnd);
             }
          }
       }
+
+      return ret;
    }
 
    /// <summary>
@@ -277,7 +291,7 @@ this.Write("// </auto-generated>\r\n//------------------------------------------
          {
             if(isComposition)
             {
-               WriteLine("return base."  +property.Name + ";");
+               WriteLine("return base."  + property.Name + ";");
             }
             else
             {
@@ -295,7 +309,7 @@ this.Write("// </auto-generated>\r\n//------------------------------------------
          {     
             if(isComposition)
             {
-               WriteLine("base."  +property.Name + " = value;");
+               WriteLine("base."  + property.Name + " = value;");
             }
             else
             {
@@ -304,6 +318,53 @@ this.Write("// </auto-generated>\r\n//------------------------------------------
          }
          PopIndent();
          WriteLine("}");
+      }
+      PopIndent();
+      WriteLine("}");
+   }
+
+   private void WriteAssociationDefinition2(IProperty property, bool isComposition) 
+   {
+      Write(property.Visibility.ToString().ToLower()+" ");
+
+      Write("new virtual ");
+      Write(AttributeStaticOption(property));
+
+      WritePropertyTypeAndVariableName(property);
+
+      WriteLine("{");
+      PushIndent("\t");
+      {
+         WriteLine("get");
+         WriteLine("{");
+         PushIndent("\t");      
+         {
+            if(isComposition)
+            {
+               WriteLine("return base."  + property.Name + ";");
+            }
+            else
+            {
+               WriteLine("return "  + ToPrivateField(property.Name) + ";");
+            }
+         }
+         PopIndent();
+         WriteLine("}");
+     
+         // compositions can't be reset
+         if(!isComposition)
+         {
+            WriteLine("");
+
+            WriteLine("set");
+            WriteLine("{");
+            PushIndent("\t");
+            {
+               WriteLine("base."  + property.Name + " = value;");
+            }
+            PopIndent();
+            WriteLine("}");
+         }
       }
       PopIndent();
       WriteLine("}");

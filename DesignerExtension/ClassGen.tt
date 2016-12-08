@@ -31,23 +31,23 @@ namespace <#=  _namespace #>
 {
 <#   PushIndent(_indent); #>
 <#
-    // Write Attributes
+    // Write Associations
+    bool isComposition;
+
     var ownedAttributes = _class.OwnedAttributes;
-    foreach(IProperty attribute in ownedAttributes)
-    {
-       WritePropertyDefinition(attribute, false);
-       WriteLine("");
+    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes, out isComposition);
+    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    {        
+      WriteAssociationDefinition2(ownedEnd, isComposition);
+      WriteLine("");
     }
 #>
 <#
-    // Write Associations
-    var navigableOwnedEnds = GetNavigableOwnedEnds(_class, ownedAttributes);
-    foreach(IProperty ownedEnd in navigableOwnedEnds) 
+    // Write Attributes
+    foreach(IProperty attribute in ownedAttributes)
     {
-        //WriteSummaryComment(ownedEnd.OwningAssociation.Description);
-        //WriteSummaryComment(ownedEnd.Description);
-        //WriteClassUmlPropertyDefinition(ownedEnd);
-        //WriteLine("");
+       WritePropertyDefinition(attribute, isComposition);
+       WriteLine("");
     }
 #>
 <#   PopIndent(); #>
